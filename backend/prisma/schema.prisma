@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  DEVELOPER
+  ADMIN
+  INCHARGE
+}
+
+enum TeamStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  password     String
+  name         String
+  role         Role          @default(INCHARGE)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  
+  // Relations
+  associations Association[]
+  eventsAsAdmin Event[]      @relation("EventAdmin")
+  categoriesAsIncharge Category[] @relation("CategoryIncharge")
+}
+
+model Association {
+  id           String        @id @default(uuid())
+  name         String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  
+  // Relations
+  createdById  String
+  createdBy    User          @relation(fields: [createdById], references: [id])
+  events       Event[]
+}
+
+model Event {
+  id           String        @id @default(uuid())
+  name         String
+  startDate    DateTime
+  endDate      DateTime
+  venue        String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  
+  // Relations
+  associationId String
+  association  Association   @relation(fields: [associationId], references: [id])
+  adminId      String
+  admin        User          @relation("EventAdmin", fields: [adminId], references: [id])
+  games        Game[]
+}
+
+model Game {
+  id           String        @id @default(uuid())
+  name         String        // e.g. Cricket, Chess
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  
+  // Relations
+  eventId      String
+  event        Event         @relation(fields: [eventId], references: [id])
+  categories   Category[]
+}
+
+model Category {
+  id           String        @id @default(uuid())
+  name         String        // e.g. Cricket Boys
+  entryFee     Float         @default(0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  
+  // Relations
+  gameId       String
+  game         Game          @relation(fields: [gameId], references: [id])
+  inchargeId   String
+  incharge     User          @relation("CategoryIncharge", fields: [inchargeId], references: [id])
+  
+  teams        Team[]
+  matches      Match[]
+}
+
+model Team {
+  id           String        @id @default(uuid())
+  name         String        // For individual games, can be Participant Name
+  captainName  String?       // Or Participant Name
+  branch       String
+  year         String
+  status       TeamStatus    @default(PENDING)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  
+  // Relations
+  categoryId   String
+  category     Category      @relation(fields: [categoryId], references: [id])
+  
+  members      TeamMember[]
+  matchesAsTeam1 Match[]     @relation("MatchTeam1")
+  matchesAsTeam2 Match[]     @relation("MatchTeam2")
+}
+
+model TeamMember {
+  id           String        @id @default(uuid())
+  name         String
+  branch       String?
+  year         String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  
+  // Relations
+  teamId       String
+  team         Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+}
+
+model Match {
+  id           String        @id @default(uuid())
+  scheduledTime DateTime?
+  result       String?       // "Team1 Won", "Draw", etc.
+  scoreData    Json?         // Future live scoring
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  
+  // Relations
+  categoryId   String
+  category     Category      @relation(fields: [categoryId], references: [id])
+  team1Id      String?
+  team1        Team?         @relation("MatchTeam1", fields: [team1Id], references: [id])
+  team2Id      String?
+  team2        Team?         @relation("MatchTeam2", fields: [team2Id], references: [id])
+}
