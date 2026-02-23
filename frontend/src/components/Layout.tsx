@@ -1,3 +1,4 @@
+
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { LogOut, LayoutDashboard, Trophy, Users, Activity, LogIn } from 'lucide-react';
@@ -45,8 +46,8 @@ const Layout = () => {
                                 key={item.path}
                                 to={item.path}
                                 className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${isActive
-                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20'
-                                        : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20'
+                                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
                                     }`}
                             >
                                 <Icon size={20} />

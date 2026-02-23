@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
-import { Card, CardHeader, CardContent } from '../../components/ui/Card';
-import { Users, CheckCircle, XCircle, Link as LinkIcon, Copy, Trash2, Edit2 } from 'lucide-react';
+import { Card, CardContent } from '../../components/ui/Card';
+import { Users, CheckCircle, XCircle, Link as LinkIcon, Trash2, Edit2 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 const InchargeDashboard = () => {
