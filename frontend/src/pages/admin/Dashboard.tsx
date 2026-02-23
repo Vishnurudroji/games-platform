@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
-import { Card, CardHeader, CardContent } from '../../components/ui/Card';
+//import { Card, CardHeader, CardContent } from '../../components/ui/Card';
 import { useAuth } from '../../contexts/AuthContext';
 import { CheckCircle } from 'lucide-react';
 
